@@ -1,0 +1,25 @@
+import groovy.io.FileType
+
+
+
+task reset << {
+    getAllProjects().each { dir ->
+        def buildFile = new File(dir, 'build.gradle')
+        StartParameter params = new StartParameter()
+        params.buildFile = buildFile
+        params.setTaskNames(['clean'])
+        GradleLauncher.newInstance(params).run()
+        File template = new File(dir, 'build-template.gradle')
+        if (template.exists()) {
+            ant.copy(
+                    file: template,
+                    tofile: buildFile,
+                    overwrite: true
+            )
+        }
+    }
+}
+
+def getAllProjects() {
+    rootDir.listFiles({File file -> file.isDirectory() && !file.isHidden() } as FileFilter)
+}

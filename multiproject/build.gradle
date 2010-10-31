@@ -1,0 +1,28 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+
+    repositories {
+       mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.7'
+    }
+
+    version = '1.0'
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+}
+
+configure(javaProjects()) {
+   
+}
+
+def javaProjects() {
+    return subprojects.findAll { project -> project.name.startsWith('test')}
+}
+
+

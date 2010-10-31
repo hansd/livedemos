@@ -1,0 +1,47 @@
+apply plugin: 'java'
+
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    integTest.extendsFrom testRuntime
+}
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.7'
+    integTest "commons-io:commons-io:1.4"
+}
+
+sourceSets {
+    integTest {
+        java.srcDir file('src/integration-test/java')
+        resources.srcDir file('src/integration-test/resources')
+        compileClasspath = sourceSets.main.classes + sourceSets.test.classes + configurations.integTest
+        runtimeClasspath = classes + compileClasspath
+    }
+}
+
+task integrationTest(type: Test, dependsOn: jar) {
+    testClassesDir = sourceSets.integTest.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+    systemProperties['jar.path'] = jar.archivePath
+}
+
+task hello << {
+    println 'hello'
+}
+
+task date(dependsOn: hello) << {
+    println new Date()
+}
+
+task currentLocation(dependsOn: date) << {
+    println 'Atlanta'
+}
+
+
+

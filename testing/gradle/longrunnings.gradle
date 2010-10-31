@@ -1,0 +1,15 @@
+test {
+    def longRunners = []
+    afterTest { descr, result ->
+        def time = result.endTime - result.startTime
+        if (time > 5) {
+            println("Test: $descr.className is long running.")
+            longRunners << descr.className
+        }
+    }
+    afterSuite { descr, result ->
+        if (!descr.parent) {
+            file("$buildDir/longrunners").text = longRunners.join('\n')
+        }
+    }
+}

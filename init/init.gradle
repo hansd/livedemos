@@ -1,0 +1,16 @@
+class GroovyBuildListener extends BuildAdapter {
+    void projectsEvaluated(Gradle gradle) {
+        gradle.rootProject.allprojects {
+            tasks.withType(Test).each { test ->
+                test.afterTest { descr, result ->
+                    def time = result.endTime - result.startTime
+                    if (time > 200) {
+                        logger.warn("Test: $descr.className is long running.")
+                    }
+                }
+            }
+        }
+    }
+}
+
+gradle.addListener(new GroovyBuildListener())
